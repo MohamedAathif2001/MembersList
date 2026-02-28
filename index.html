@@ -5,46 +5,40 @@
 <title>Member Directory</title>
 <style>
 body { font-family: Arial; max-width:800px; margin:auto; padding:20px; }
-h2 { border-bottom:1px solid #ddd; padding-top:20px; }
+h2 { border-bottom:1px solid #ddd; padding-top:20px; margin-top:30px; }
 .row { display:flex; gap:10px; padding:4px 0; }
 .no { width:50px; font-weight:bold; }
 .pos { color:#666; }
 </style>
 </head>
-
 <body>
 
 <h1>Member Directory</h1>
 <div id="content">Loading...</div>
 
-<script src="config.js"></script>
-
 <script>
-
-fetch(API_URL)
-.then(r=>r.json())
-.then(data=>{
-
+fetch("/api/members")
+.then(r => r.json())
+.then(data => {
   const groups = {};
-  data.forEach(m=>{
-    if(!groups[m.Category]) groups[m.Category]=[];
+  data.forEach(m => {
+    if(!groups[m.Category]) groups[m.Category] = [];
     groups[m.Category].push(m);
   });
 
   const container = document.getElementById("content");
-  container.innerHTML="";
+  container.innerHTML = "";
 
-  for(const cat in groups){
-
+  for (const cat in groups) {
     const h = document.createElement("h2");
     h.textContent = cat;
     container.appendChild(h);
 
     groups[cat]
-      .sort((a,b)=>a.No-b.No)
-      .forEach(m=>{
+      .sort((a,b) => a.No - b.No)
+      .forEach(m => {
         const row = document.createElement("div");
-        row.className="row";
+        row.className = "row";
         row.innerHTML =
           `<div class="no">${m.No}</div>
            <div>${m.Name}</div>
@@ -52,9 +46,10 @@ fetch(API_URL)
         container.appendChild(row);
       });
   }
-
+})
+.catch(err => {
+  document.getElementById("content").innerText = "Failed to load members.";
 });
-
 </script>
 
 </body>
